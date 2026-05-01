@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Beauty Store</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --purple: #4a1d96;
+  --purple-mid: #6d28d9;
+  --purple-light: #8b5cf6;
+  --purple-soft: #ede9fe;
+  --text: #1f1235;
+  --gray: #6b7280;
+  --border: #e5e7eb;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: #f3f0ff;
+  color: var(--text);
+}
+
+/* NAVBAR */
+nav {
+  background: var(--purple);
+  padding: 14px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(74,29,150,0.4);
+}
+
+nav .logo {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+nav .logo span { color: #f9a8d4; }
+
+nav .links a {
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  margin-left: 22px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+nav .links a:hover { color: white; }
+
+.cart-badge {
+  background: #f9a8d4;
+  color: var(--purple);
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 3px;
+}
+
+/* HERO SLIDER */
+#slider {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  transition: 1s;
+}
+
+/* TITLE */
+.products-label {
+  padding: 20px 30px 0;
+  font-weight: 800;
+  color: var(--purple);
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+/* GRID */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 22px;
+  padding: 20px 30px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* CARD */
+.product-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(109,40,217,0.07);
+  overflow: hidden;
+  transition: 0.3s;
+  border: 1px solid var(--border);
+  position: relative;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 28px rgba(109,40,217,0.16);
+}
+
+.product-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+/* WISHLIST */
+.wish-heart {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.card-body { padding: 16px; }
+
+.card-name {
+  font-weight: 800;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.card-price {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--purple);
+  margin-bottom: 14px;
+}
+
+.card-btns { display: flex; gap: 8px; }
+
+.btn-cart {
+  flex: 1;
+  background: var(--purple-mid);
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* CTA */
+.cta {
+  text-align: center;
+  padding: 40px;
+}
+
+.cta a {
+  background: var(--purple-mid);
+  color: white;
+  padding: 12px 25px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 700;
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="index.html" class="logo">Beauty<span>Store</span></a>
+  <div class="links">
+    <a href="index.html">Home</a>
+    <a href="products.html">Products</a>
+    <a href="cart.html">Cart 🛒 <span class="cart-badge" id="cart-badge">0</span></a>
+    <a href="wishlist.html">Wishlist ❤️</a>
+    <a href="orders.html">Orders 📦</a>
+  </div>
+</nav>
+
+<!-- SLIDER -->
+<img id="slider">
+
+<script>
+let imgs=[
+"https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9",
+"https://images.unsplash.com/photo-1596462502278-27bfdc403348",
+"https://images.unsplash.com/photo-1512496015851-a90fb38ba796"
+];
+let i=0;
+setInterval(()=>{
+i=(i+1)%imgs.length;
+document.getElementById("slider").src=imgs[i];
+},2500);
+document.getElementById("slider").src=imgs[0];
+</script>
+
+<!-- TITLE -->
+<div class="products-label">✨ Hand Picked For You</div>
+
+<!-- PRODUCTS -->
+<div class="products-grid" id="products-grid"></div>
+
+<script>
+const featuredProducts = [
+  { id:"f1", name:"Rose Glow Serum", price:599, image:"https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400" },
+  { id:"f2", name:"Lip Butter Balm", price:199, image:"https://images-cdn.ubuy.co.in/64ece0e1fd60d104af6eacc5-chap-lip-lip-butter-lip-balm-with-fruit.jpg" },
+  { id:"f3", name:"Vitamin C Brightener", price:799, image:"https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?w=400" },
+  { id:"f4", name:"Matte Foundation", price:899, image:"https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400" },
+  { id:"f5", name:"Glow Highlighter", price:449, image:"https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400" },
+  { id:"f6", name:"Hydrating Face Wash", price:299, image:"https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400" },
+  { id:"f7", name:"Aloe Vera Gel", price:199, image:"https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=400" },
+  { id:"f8", name:"SPF 50 Sunscreen", price:599, image:"https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400" }
+];
+
+let wishSet = new Set((JSON.parse(localStorage.getItem("wish")) || []).map(w => w.id));
+
+function renderProducts(products){
+  const grid = document.getElementById("products-grid");
+
+  grid.innerHTML = products.map(p => `
+    <div class="product-card">
+      <img src="${p.image}">
+      <button class="wish-heart" onclick='addWish(${JSON.stringify(p)})'>❤️</button>
+
+      <div class="card-body">
+        <div class="card-name">${p.name}</div>
+        <div class="card-price">₹${p.price}</div>
+
+        <div class="card-btns">
+          <button class="btn-cart" onclick='addCart(${JSON.stringify(p)})'>
+            🛒 Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+renderProducts(featuredProducts);
+
+function addCart(p){
+let cart=JSON.parse(localStorage.getItem("cart"))||[];
+cart.push(p);
+localStorage.setItem("cart",JSON.stringify(cart));
+updateBadge();
+alert("Added to cart");
+}
+
+function addWish(p){
+let w=JSON.parse(localStorage.getItem("wish"))||[];
+w.push(p);
+localStorage.setItem("wish",JSON.stringify(w));
+alert("Added to wishlist");
+}
+
+function updateBadge(){
+let cart=JSON.parse(localStorage.getItem("cart"))||[];
+document.getElementById("cart-badge").textContent = cart.length;
+}
+updateBadge();
+</script>
+
+<!-- CTA -->
+<div class="cta">
+  <h2>See All Products →</h2><br>
+  <a href="products.html">Browse All Products</a>
+</div>
+
+</body>
+</html>

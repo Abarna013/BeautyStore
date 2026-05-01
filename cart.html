@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cart – Beauty Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple: #4a1d96;
+    --purple-mid: #6d28d9;
+    --purple-light: #8b5cf6;
+    --purple-soft: #ede9fe;
+    --accent: #f59e0b;
+    --danger: #ef4444;
+    --text: #1f1235;
+    --gray: #6b7280;
+    --border: #e5e7eb;
+    --white: #fff;
+  }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #f3f0ff;
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* NAVBAR */
+  nav {
+    background: var(--purple);
+    padding: 14px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(74,29,150,0.4);
+  }
+  nav .logo {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-decoration: none;
+    letter-spacing: -0.5px;
+  }
+  nav .logo span { color: #f9a8d4; }
+  nav .links a {
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    margin-left: 22px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+  }
+  nav .links a:hover { color: white; }
+  nav .links a.active { color: #f9a8d4; border-bottom: 2px solid #f9a8d4; padding-bottom: 2px; }
+
+  /* CART HEADER */
+  .cart-header {
+    background: var(--white);
+    padding: 20px 30px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cart-header h1 {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: var(--purple);
+  }
+  .cart-header p { color: var(--gray); font-size: 0.9rem; margin-top: 2px; }
+
+  /* MAIN LAYOUT */
+  .cart-body {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* CART ITEMS SECTION */
+  .cart-items-section {
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(109,40,217,0.08);
+    overflow: hidden;
+  }
+  .cart-items-section .sec-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: var(--purple);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .clear-all-btn {
+    font-size: 0.8rem;
+    color: var(--danger);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+  }
+  .clear-all-btn:hover { text-decoration: underline; }
+
+  /* SINGLE CART ITEM */
+  .cart-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    gap: 18px;
+    transition: background 0.2s;
+  }
+  .cart-item:last-child { border-bottom: none; }
+  .cart-item:hover { background: #faf9ff; }
+
+  .cart-item input[type="checkbox"] {
+    margin-top: 6px;
+    accent-color: var(--purple-mid);
+    width: 17px;
+    height: 17px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .item-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .item-details { flex: 1; }
+  .item-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .item-meta {
+    font-size: 0.8rem;
+    color: var(--gray);
+    margin-bottom: 10px;
+  }
+  .item-price {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--purple);
+    margin-bottom: 12px;
+  }
+
+  /* QTY CONTROLS */
+  .qty-controls {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1.5px solid var(--purple-light);
+    border-radius: 8px;
+    overflow: hidden;
+    display: inline-flex;
+  }
+  .qty-btn {
+    width: 32px;
+    height: 32px;
+    background: var(--purple-soft);
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--purple);
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .qty-btn:hover { background: var(--purple-light); color: white; }
+  .qty-num {
+    width: 38px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border: none;
+    outline: none;
+    color: var(--text);
+    background: white;
+  }
+
+  .item-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+    align-items: center;
+  }
+  .remove-btn {
+    background: none;
+    border: none;
+    color: var(--danger);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+  }
+  .remove-btn:hover { text-decoration: underline; }
+  .wish-btn {
+    background: none;
+    border: none;
+    color: var(--purple-mid);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+  }
+  .wish-btn:hover { text-decoration: underline; }
+
+  /* EMPTY STATE */
+  .empty-cart {
+    text-align: center;
+    padding: 60px 24px;
+  }
+  .empty-cart .empty-icon { font-size: 4rem; margin-bottom: 16px; }
+  .empty-cart h3 { font-size: 1.3rem; font-weight: 800; color: var(--purple); margin-bottom: 8px; }
+  .empty-cart p { color: var(--gray); margin-bottom: 20px; }
+  .shop-btn {
+    background: var(--purple-mid);
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s;
+  }
+  .shop-btn:hover { background: var(--purple); }
+
+  /* ORDER SUMMARY */
+  .summary-box {
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(109,40,217,0.08);
+    padding: 24px;
+    position: sticky;
+    top: 80px;
+  }
+  .summary-box h2 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--purple);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+  }
+  .summary-row .label { color: var(--gray); }
+  .summary-row .value { font-weight: 700; color: var(--text); }
+  .summary-divider { border: none; border-top: 1px dashed var(--border); margin: 14px 0; }
+  .summary-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--purple);
+    margin-bottom: 20px;
+  }
+  .savings-badge {
+    background: #d1fae5;
+    color: #065f46;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .checkout-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--purple-mid), var(--purple));
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 15px rgba(109,40,217,0.35);
+  }
+  .checkout-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(109,40,217,0.45);
+  }
+  .checkout-btn:active { transform: translateY(0); }
+
+  .secure-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 0.78rem;
+    color: var(--gray);
+  }
+
+  .promo-box {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .promo-box label { font-size: 0.85rem; font-weight: 700; color: var(--gray); display: block; margin-bottom: 8px; }
+  .promo-input-row { display: flex; gap: 8px; }
+  .promo-input {
+    flex: 1;
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-family: 'Nunito', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .promo-input:focus { border-color: var(--purple-light); }
+  .promo-apply {
+    padding: 9px 16px;
+    background: var(--purple-soft);
+    color: var(--purple);
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+  }
+  .promo-apply:hover { background: var(--purple-light); color: white; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--purple);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s;
+    z-index: 999;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .cart-body { grid-template-columns: 1fr; }
+    .summary-box { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Beauty<span>Store</span></a>
+  <div class="links">
+    <a href="index.html">Home</a>
+    <a href="products.html">Products</a>
+    <a href="cart.html" class="active">Cart 🛒</a>
+    <a href="wishlist.html">Wishlist ❤️</a>
+    <a href="orders.html">Orders 📦</a>
+  </div>
+</nav>
+
+<div class="cart-header">
+  <h1>🛒 Shopping Cart</h1>
+  <p id="cart-count-header">Loading...</p>
+</div>
+
+<div class="cart-body">
+
+  <!-- ITEMS SECTION -->
+  <div class="cart-items-section">
+    <div class="sec-header">
+      <span id="items-heading">Your Items</span>
+      <button class="clear-all-btn" onclick="clearAll()">Clear All</button>
+    </div>
+    <div id="cart-container"></div>
+  </div>
+
+  <!-- ORDER SUMMARY -->
+  <div class="summary-box">
+    <h2>🧾 Order Summary</h2>
+    <div class="summary-row">
+      <span class="label">Subtotal (<span id="s-count">0</span> items)</span>
+      <span class="value" id="s-subtotal">₹0</span>
+    </div>
+    <div class="summary-row">
+      <span class="label">Delivery Charges</span>
+      <span class="value" id="s-delivery" style="color:#10b981;">FREE</span>
+    </div>
+    <div class="summary-row">
+      <span class="label">Discount</span>
+      <span class="value" style="color:#ef4444;" id="s-discount">-₹0</span>
+    </div>
+    <hr class="summary-divider">
+    <div class="summary-total">
+      <span>Total Amount</span>
+      <span id="s-total">₹0</span>
+    </div>
+    <div class="savings-badge" id="savings-badge" style="display:none;">
+      🎉 You are saving <span id="s-savings">₹0</span> on this order!
+    </div>
+    <button class="checkout-btn" onclick="placeOrder()">
+      Proceed to Checkout →
+    </button>
+    <div class="secure-badge">🔒 Secure payments powered by Beauty Store</div>
+
+    <div class="promo-box">
+      <label>Have a promo code?</label>
+      <div class="promo-input-row">
+        <input class="promo-input" id="promo-input" placeholder="Enter code">
+        <button class="promo-apply" onclick="applyPromo()">Apply</button>
+      </div>
+      <p id="promo-msg" style="font-size:0.78rem;margin-top:6px;"></p>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let promoApplied = false;
+let discountPct = 0;
+
+function renderCart() {
+  const container = document.getElementById("cart-container");
+  const count = cart.reduce((s, item) => s + (item.qty || 1), 0);
+
+  document.getElementById("cart-count-header").textContent =
+    count > 0 ? `${count} item${count !== 1 ? "s" : ""} in your cart` : "Your cart is empty";
+  document.getElementById("items-heading").textContent =
+    count > 0 ? `Your Items (${count})` : "Your Items";
+
+  if (cart.length === 0) {
+    container.innerHTML = `
+      <div class="empty-cart">
+        <div class="empty-icon">🛒</div>
+        <h3>Your cart is empty!</h3>
+        <p>Looks like you haven't added anything yet.</p>
+        <a href="products.html" class="shop-btn">Shop Now</a>
+      </div>`;
+    updateSummary(0, 0);
+    return;
+  }
+
+  let html = "";
+  cart.forEach((item, i) => {
+    const qty = item.qty || 1;
+    html += `
+      <div class="cart-item">
+        <input type="checkbox" checked onchange="toggleSelect(${i}, this.checked)">
+        <img class="item-img" src="${item.image}" onerror="this.src='https://via.placeholder.com/100x100?text=Product'">
+        <div class="item-details">
+          <div class="item-name">${item.name}</div>
+          <div class="item-meta">Beauty Store · In Stock ✅</div>
+          <div class="item-price">₹${item.price}</div>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
+            <input class="qty-num" type="number" value="${qty}" min="1" onchange="setQty(${i}, this.value)" readonly>
+            <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
+          </div>
+          <div class="item-actions">
+            <button class="remove-btn" onclick="removeItem(${i})">🗑 Remove</button>
+            <span style="color:#d1d5db;">|</span>
+            <button class="wish-btn" onclick="moveToWish(${i})">❤️ Save for later</button>
+          </div>
+        </div>
+      </div>`;
+  });
+  container.innerHTML = html;
+  calcSummary();
+}
+
+function calcSummary() {
+  const subtotal = cart.reduce((s, item) => s + parseInt(item.price) * (item.qty || 1), 0);
+  const discount = promoApplied ? Math.round(subtotal * discountPct / 100) : 0;
+  const total = subtotal - discount;
+
+  document.getElementById("s-count").textContent = cart.reduce((s, i) => s + (i.qty || 1), 0);
+  document.getElementById("s-subtotal").textContent = "₹" + subtotal;
+  document.getElementById("s-discount").textContent = "-₹" + discount;
+  document.getElementById("s-total").textContent = "₹" + total;
+
+  const savBadge = document.getElementById("savings-badge");
+  if (discount > 0) {
+    document.getElementById("s-savings").textContent = "₹" + discount;
+    savBadge.style.display = "block";
+  } else {
+    savBadge.style.display = "none";
+  }
+
+  if (subtotal >= 999) {
+    document.getElementById("s-delivery").textContent = "FREE";
+    document.getElementById("s-delivery").style.color = "#10b981";
+  } else {
+    document.getElementById("s-delivery").textContent = "₹49";
+    document.getElementById("s-delivery").style.color = "#374151";
+  }
+}
+
+function updateSummary(subtotal, discount) {
+  document.getElementById("s-count").textContent = 0;
+  document.getElementById("s-subtotal").textContent = "₹0";
+  document.getElementById("s-discount").textContent = "-₹0";
+  document.getElementById("s-total").textContent = "₹0";
+}
+
+function changeQty(i, delta) {
+  cart[i].qty = Math.max(1, (cart[i].qty || 1) + delta);
+  save(); renderCart();
+}
+function setQty(i, val) {
+  cart[i].qty = Math.max(1, parseInt(val) || 1);
+  save(); renderCart();
+}
+function removeItem(i) {
+  cart.splice(i, 1);
+  save(); renderCart();
+  toast("Item removed from cart");
+}
+function moveToWish(i) {
+  let wish = JSON.parse(localStorage.getItem("wish")) || [];
+  wish.push(cart[i]);
+  localStorage.setItem("wish", JSON.stringify(wish));
+  cart.splice(i, 1);
+  save(); renderCart();
+  toast("❤️ Saved to wishlist!");
+}
+function clearAll() {
+  if (cart.length === 0) return;
+  if (confirm("Clear all items from cart?")) {
+    cart = []; save(); renderCart(); toast("Cart cleared");
+  }
+}
+function toggleSelect(i, val) { /* visual only */ }
+function save() { localStorage.setItem("cart", JSON.stringify(cart)); }
+
+function applyPromo() {
+  const code = document.getElementById("promo-input").value.trim().toUpperCase();
+  const msg = document.getElementById("promo-msg");
+  if (code === "BEAUTY20") {
+    promoApplied = true; discountPct = 20;
+    msg.textContent = "✅ 20% off applied!";
+    msg.style.color = "#10b981";
+    calcSummary();
+  } else if (code === "FIRST10") {
+    promoApplied = true; discountPct = 10;
+    msg.textContent = "✅ 10% off applied!";
+    msg.style.color = "#10b981";
+    calcSummary();
+  } else {
+    msg.textContent = "❌ Invalid promo code";
+    msg.style.color = "#ef4444";
+  }
+}
+
+function placeOrder() {
+  if (cart.length === 0) { toast("Your cart is empty!"); return; }
+  const subtotal = cart.reduce((s, i) => s + parseInt(i.price) * (i.qty || 1), 0);
+  const discount = promoApplied ? Math.round(subtotal * discountPct / 100) : 0;
+  const order = {
+    id: "ORD" + Date.now(),
+    date: new Date().toLocaleDateString("en-IN"),
+    items: [...cart],
+    total: subtotal - discount,
+    status: "Processing"
+  };
+  let orders = JSON.parse(localStorage.getItem("orders")) || [];
+  orders.unshift(order);
+  localStorage.setItem("orders", JSON.stringify(orders));
+  cart = []; save(); renderCart();
+  toast("🎉 Order placed successfully!");
+  setTimeout(() => window.location.href = "orders.html", 1500);
+}
+
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2500);
+}
+
+renderCart();
+</script>
+</body>
+</html>

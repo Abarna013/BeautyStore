@@ -1,5 +1,6 @@
 const express = require("express");
 const sqlite3 = require("sqlite3").verbose();
+const path = require("path");
 
 const app = express();
 const db = new sqlite3.Database("./database.db");
@@ -32,7 +33,6 @@ WHERE id NOT IN (
 app.post("/add-product", (req, res) => {
   const { name, price, image } = req.body;
 
-  // Validation
   if (!name || !price || !image) {
     return res.status(400).send("All fields required!");
   }
@@ -55,12 +55,12 @@ app.get("/products", (req, res) => {
   });
 });
 
-// Default route (optional)
+// ✅ FIXED: Serve homepage correctly
 app.get("/", (req, res) => {
-  res.send("Server is running!");
+  res.sendFile(path.join(__dirname, "views", "index.html"));
 });
 
-// ✅ IMPORTANT: Dynamic port for Render
+// Start server (Render compatible)
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
